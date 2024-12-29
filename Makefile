@@ -1,7 +1,6 @@
 # Compiler and flags
 CC = gcc
 CFLAGS = -Wall -g -I./src
-LDFLAGS = -lncurses  # Add this line to link ncurses
 
 # Directories
 SRC_DIR = src
@@ -18,19 +17,19 @@ EXEC = $(BIN_DIR)/dining_philosophers
 # Default target
 all: $(EXEC)
 
-# Ensure obj directory exists before compiling object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(OBJ_DIR)  # Create obj directory if it does not exist
-	$(CC) $(CFLAGS) -c $< -o $@
-
 # Linking the executable
 $(EXEC): $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $(EXEC) $(LDFLAGS)
+	$(CC) $(OBJ_FILES) -o $(EXEC)
+
+# Compiling object files
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Clean target
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
-	@mkdir -p $(OBJ_DIR)  # Recreate the obj directory after cleaning
+	find $(OBJ_DIR) -type f -exec rm -f {} \;
+	find $(BIN_DIR) -type f -exec rm -f {} \;
 
 .PHONY: all clean
 
