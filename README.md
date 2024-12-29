@@ -4,14 +4,14 @@
 \- [] rozwiązać problem synchronizacji wątków
 \- [] rozwiązać problem zagłodzenia
 \- [] rozwiązać problem zakleszczenia
-\- [] wykorzystać zmienną warunkową
+\- [x] wykorzystać zmienną warunkową
 
 **Zadanie:**
-\- [] C, biblioteka pthread
+\- [x] C, biblioteka pthread
 \- [x] Linux
-\- [] Zero interakcjii z użytkownikiem, jedynie symulacja
+\- [x] Zero interakcjii z użytkownikiem, jedynie symulacja
 \- [x] Liczba filozofów jako argument programu, min 5
-\- [] Wątek główny ma kończyć się jako ostatni
+\- [x] Wątek główny ma kończyć się jako ostatni
 
 **Zasady wizualizacji:**
 \- [] Biblioteka ncurses
