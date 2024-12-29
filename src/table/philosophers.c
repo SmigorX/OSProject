@@ -83,7 +83,7 @@ void simulate_philosopher(philosopher_t *philosopher) {
     while (1) {    
        // Thinking 
         philosopher->state = THINKING;
-        usleep(rand() % 500000);
+        usleep(rand() % 1000000);
 
         // Hungry
         philosopher->state = HUNGRY;
@@ -94,7 +94,7 @@ void simulate_philosopher(philosopher_t *philosopher) {
         philosopher->state = EATING;
         philosopher->left_chopstick->state = DIRTY;
         philosopher->right_chopstick->state = DIRTY;
-        usleep(rand() % 500000);
+        usleep(rand() % 1000000);
     
         // Cleanup
         pthread_cond_signal(philosopher->left_chopstick->condition);

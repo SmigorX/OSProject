@@ -1,6 +1,7 @@
 # Compiler and flags
 CC = gcc
 CFLAGS = -Wall -g -I./src
+LDFLAGS = -lncurses
 
 # Directories
 SRC_DIR = src
@@ -19,7 +20,7 @@ all: $(EXEC)
 
 # Linking the executable
 $(EXEC): $(OBJ_FILES)
-	$(CC) $(OBJ_FILES) -o $(EXEC)
+	$(CC) $(OBJ_FILES) -o $(EXEC) $(LDFLAGS)
 
 # Compiling object files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
