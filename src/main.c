@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
     spawn_philosophers(philosophers, num_of_philosophers, philosopher_threads);
 
-    spawn_drawing_thread(num_of_philosophers, philosophers, &drawing_thread); 
+    spawn_drawing_thread(num_of_philosophers, philosophers, chopsticks, &drawing_thread); 
 
     // --Clean up--
     pthread_join(drawing_thread, NULL);
