@@ -12,7 +12,6 @@ void draw_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
     // 
     // draw_table draws the table with philosophers and their states
 
-    // Visualization logic setup
     philosopher_visualization_t *philosophers_visualization = malloc(
         num_of_philosophers * sizeof(philosopher_visualization_t));
 
@@ -54,7 +53,6 @@ void draw_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
         int x = 0;
         int y = 0;
 
-        // Chopstick drawing
         for (int i = 0; i < num_of_philosophers; i++) {
             if (chopsticks_visualization[i].owner == chopsticks[i].owner) {
                     attron(COLOR_PAIR(4));
@@ -71,7 +69,6 @@ void draw_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
             y++;
             x = 0;
 
-            // Philosopher drawing
             mvprintw(y, x, "Philosopher %d: ", philosophers[i].id);
 
             if (philosophers_visualization[i].state == philosophers[i].state) {
@@ -89,17 +86,17 @@ void draw_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
 
             switch (philosophers[i].state) {
                 case THINKING:
-                    attron(COLOR_PAIR(0)); // Blue text for THINKING     
+                    attron(COLOR_PAIR(0)); 
                     printw("Thinking");
                     attroff(COLOR_PAIR(0));
                     break;
                 case HUNGRY:
-                    attron(COLOR_PAIR(1)); // Yellow text for HUNGRY
+                    attron(COLOR_PAIR(1));
                     printw("Hungry  ");
                     attroff(COLOR_PAIR(1));
                     break;
                 case EATING:
-                    attron(COLOR_PAIR(2)); // Green text for EATING
+                    attron(COLOR_PAIR(2));
                     printw("Eating  ");
                     attroff(COLOR_PAIR(3));
                     break;
@@ -116,14 +113,13 @@ void draw_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
         usleep(1000);
     }
 
-    // End ncurses at the end (add cleanup if you want to exit the loop)
     endwin();
 }
 
 void *draw_table_wrapper(void *arg) {
-    draw_table_args_t *args = (draw_table_args_t *)arg; // Cast void pointer to draw_table_args_t pointer
-    draw_table(args->num_of_philosophers, args->philosophers, args->chopsticks); // Call draw_table with arguments
-    free(args); // Free memory allocated for arguments
+    draw_table_args_t *args = (draw_table_args_t *)arg; 
+    draw_table(args->num_of_philosophers, args->philosophers, args->chopsticks);
+    free(args); 
     return NULL;
 }
 

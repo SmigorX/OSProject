@@ -15,7 +15,6 @@ void init_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
     // 
     // init_table initializes philosophers and their chopsticks
 
-    // Initialize chopsticks
     for (int i = 0; i < num_of_philosophers; i++) {
         chopsticks[i].owner = NULL;
         chopsticks[i].state = DIRTY;
@@ -30,7 +29,6 @@ void init_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
         pthread_cond_init(chopsticks[i].condition, NULL);
     }
 
-    // Initialize philosophers
     for (int i = 0; i < num_of_philosophers; i++) {
         philosophers[i].id = i;
         philosophers[i].left_chopstick = &chopsticks[i];
@@ -55,33 +53,28 @@ int chopstick_request(chopstick_t *chopstick, philosopher_t *philosopher) {
    
     pthread_mutex_lock(&chopstick->mutex);
 
-    // If we own the chopstick, do nothing
     if (chopstick->owner == philosopher) {
         pthread_mutex_unlock(&chopstick->mutex);
-        return 0;  // Successfully acquired the chopstick
+        return 0;  
     }
 
-    // Prepare for timeout
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    ts.tv_sec += 1;  // Set timeout to 1 second
+    ts.tv_sec += 1; 
 
-    // Waiting for chopstick
     while ((chopstick->owner->state == HUNGRY && chopstick->state == CLEAN) ||
            (chopstick->owner->state == EATING)) {
         if (pthread_cond_timedwait(chopstick->condition, &chopstick->mutex, &ts) == ETIMEDOUT) {
-            // Timeout occurred, release chopstick and return failure (1)
             pthread_mutex_unlock(&chopstick->mutex);
             return 1;  // Timeout, philosopher couldn't acquire the chopstick
         }
     }
 
-    // Steal the chopstick
     chopstick->owner = philosopher;
     chopstick->state = CLEAN;
 
     pthread_mutex_unlock(&chopstick->mutex);
-    return 0;  // Successfully acquired the chopstick
+    return 0; 
 }
 
 void simulate_philosopher(philosopher_t *philosopher) {
@@ -106,7 +99,7 @@ void simulate_philosopher(philosopher_t *philosopher) {
             continue; 
         }
 
-        // Simulate eating
+        // Eating
         philosopher->state = EATING;
         philosopher->left_chopstick->state = DIRTY;
         philosopher->right_chopstick->state = DIRTY;
@@ -118,10 +111,9 @@ void simulate_philosopher(philosopher_t *philosopher) {
     }    
 }
 
-// Wrapper function to make simulate_philosopher work with pthread_create
 void *simulate_philosopher_wrapper(void *arg) {
-    philosopher_t *philosopher = (philosopher_t *)arg;  // Cast the void pointer back to philosopher_t *
-    simulate_philosopher(philosopher);  // Now pass the philosopher to the function
+    philosopher_t *philosopher = (philosopher_t *)arg;  
+    simulate_philosopher(philosopher);  
     return NULL;
 }
 
