@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h> 
+#include <time.h>
+#include <errno.h>
+#include <sched.h> 
 
 void init_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_t *chopsticks) {
     // Args: 
@@ -43,35 +46,42 @@ void init_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
     chopsticks[num_of_philosophers].owner = &philosophers[0];
 }
 
-void chopstick_request(chopstick_t *chopstick, philosopher_t *philosopher) {
+#define TIMEOUT_US 1000000  // 1 second timeout for waiting for chopsticks
+
+int chopstick_request(chopstick_t *chopstick, philosopher_t *philosopher) {
     // Args:
     // chopstick: pointer to chopstick to request
     // philosopher: pointer to philosopher requesting the chopstick
-    // 
-    // chopstick_request requests a chopstick for a philosopher
    
     pthread_mutex_lock(&chopstick->mutex);
 
-    //If we own the chopstick do nothing
+    // If we own the chopstick, do nothing
     if (chopstick->owner == philosopher) {
         pthread_mutex_unlock(&chopstick->mutex);
-        return;
+        return 0;  // Successfully acquired the chopstick
     }
 
-    //Waiting for chopstick
+    // Prepare for timeout
+    struct timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec += 1;  // Set timeout to 1 second
+
+    // Waiting for chopstick
     while ((chopstick->owner->state == HUNGRY && chopstick->state == CLEAN) ||
-        (chopstick->owner->state == EATING)) {
-            
-        pthread_cond_wait(chopstick->condition, &chopstick->mutex);
+           (chopstick->owner->state == EATING)) {
+        if (pthread_cond_timedwait(chopstick->condition, &chopstick->mutex, &ts) == ETIMEDOUT) {
+            // Timeout occurred, release chopstick and return failure (1)
+            pthread_mutex_unlock(&chopstick->mutex);
+            return 1;  // Timeout, philosopher couldn't acquire the chopstick
+        }
     }
 
-    //Steal the chopstick
+    // Steal the chopstick
     chopstick->owner = philosopher;
     chopstick->state = CLEAN;
 
     pthread_mutex_unlock(&chopstick->mutex);
-    
-    return;
+    return 0;  // Successfully acquired the chopstick
 }
 
 void simulate_philosopher(philosopher_t *philosopher) {
@@ -83,18 +93,24 @@ void simulate_philosopher(philosopher_t *philosopher) {
     while (1) {    
        // Thinking 
         philosopher->state = THINKING;
-        usleep(rand() % 1000000 + 1000);
+        usleep(rand() % 100000 + 100);
 
         // Hungry
         philosopher->state = HUNGRY;
-        chopstick_request(philosopher->left_chopstick, philosopher);
-        chopstick_request(philosopher->right_chopstick, philosopher);
-    
+        int first_chopstick_state = chopstick_request(philosopher->left_chopstick, philosopher);
+        if (first_chopstick_state == 1) {
+            continue;
+        }
+        int second_chopstick_state = chopstick_request(philosopher->right_chopstick, philosopher);
+        if (second_chopstick_state == 1) {
+            continue; 
+        }
+
         // Simulate eating
         philosopher->state = EATING;
         philosopher->left_chopstick->state = DIRTY;
         philosopher->right_chopstick->state = DIRTY;
-        usleep(rand() % 1000000 + 1000);
+        usleep(rand() % 100000 + 100);
     
         // Cleanup
         pthread_cond_signal(philosopher->left_chopstick->condition);
