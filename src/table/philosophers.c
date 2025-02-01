@@ -36,7 +36,7 @@ void init_table(int num_of_philosophers, philosopher_t *philosophers, chopstick_
         philosophers[i].state = THINKING;
     }
 
-    //set chopsticks owner to lower id philosopher
+    //set chopsticks owner to lower id philosopher to kickstart
     for (int i = 0; i < (num_of_philosophers); i++) {
         chopsticks[i].owner = &philosophers[i];
     }

@@ -11,7 +11,7 @@ typedef struct {
 
 typedef struct philosopher {
     int state;             // The state of the philosopher (e.g., THINKING, HUNGRY, EATING)
-    int state_counter;       // The timer to track how long they are in the current state
+    int state_counter;       // The timer to track how long they are in the current state depends on the probing rate of the visualization
 } philosopher_visualization_t;
 
 typedef struct chopstick {
