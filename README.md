@@ -15,7 +15,7 @@
 
 **Zasady wizualizacji:**
 - [x] Biblioteka ncurses
-- [] Wizualizacja stanu filozofów i widelców(zasobów)
+- [x] Wizualizacja stanu filozofów i widelców(zasobów)
 - [x] Płynna wizualizacja, aktualizacja min 2-3 razy na sekundę
 - [x] Można dodać licznik postępu
 - [x] Czytelna wizualizacja
